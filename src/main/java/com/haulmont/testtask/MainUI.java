@@ -12,6 +12,8 @@ import com.vaadin.ui.themes.ValoTheme;
 @Theme(ValoTheme.THEME_NAME)
 public class MainUI extends UI {
 
+    private ClientController clientController = new ClientController();
+
     @Override
     protected void init(VaadinRequest request) {
         /*VerticalLayout todosList = new VerticalLayout(); // (1)
@@ -35,6 +37,7 @@ public class MainUI extends UI {
             //Checkbox checkbox = new Checkbox(taskField.getValue());
             //todosList.add(checkbox);
         //});
+
 
 
 
