@@ -1,25 +1,18 @@
 package com.haulmont.testtask;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.HashMap;
 
 public abstract class AbstractController <E, K>{
-    private Connection connection = null;
+    private static Connection connection = null;
 
-    public AbstractController() {
-        try {
-            if(connection != null)
-                connection = DriverManager.getConnection("jdbc:hsqldb:file:db-data/testdb/", "SA", "");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public abstract void getAll();
+    public abstract HashMap<K, E> getAll();
     public abstract E update(E entity);
     public abstract E getEntityById(K id);
     public abstract boolean delete(K id);
@@ -27,9 +20,11 @@ public abstract class AbstractController <E, K>{
 
 
     // Получение экземпляра PrepareStatement
-    public PreparedStatement getPrepareStatement(String sql) {
+    public static PreparedStatement getPrepareStatement(String sql) {
         PreparedStatement ps = null;
         try {
+            System.out.println("!Preparing statement\n" + sql);
+            System.out.println(connection);
             ps = connection.prepareStatement(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,7 +34,7 @@ public abstract class AbstractController <E, K>{
     }
 
     // Закрытие PrepareStatement
-    public void closePrepareStatement(PreparedStatement ps) {
+    public static void closePrepareStatement(PreparedStatement ps) {
         if (ps != null) {
             try {
                 ps.close();
@@ -49,9 +44,58 @@ public abstract class AbstractController <E, K>{
         }
     }
 
-    public String resdToString(String path){
-        File file = new File(path);
-        String str = FileUtils.readFileToString(file, "utf-8");
-        return "";
+    public static boolean setConnection(){
+        try {
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:mydb", "SA", "");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection != null;
+    }
+
+    public static boolean createTables(){
+        String query = null;
+        try {
+            query = readFileToString("sql/createTables.sql");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PreparedStatement ps = getPrepareStatement(query);
+        int res = 0;
+        try {
+            res = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        return res == 1;
+    }
+
+    public static boolean insertValues(){
+        String query = null;
+        try {
+            query = readFileToString("sql/insertValues.sql");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] queries = query.split("\n");
+        int rows = 0;
+            for(int i = 0; i < queries.length; i++) {
+                PreparedStatement ps = getPrepareStatement(queries[i]);
+                try {
+                    rows += ps.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    closePrepareStatement(ps);
+                }
+            }
+        return rows == queries.length;
+    }
+
+
+    private static String readFileToString(String fileName) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(fileName)));
     }
 }

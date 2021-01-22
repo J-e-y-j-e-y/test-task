@@ -1,0 +1,8 @@
+CREATE TABLE CLIENTS(
+    id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    phone VARCHAR(11) NOT NULL,
+    email VARCHAR(20) NOT NULL,
+    passport VARCHAR(6) NOT NULL,
+    PRIMARY KEY (id)
+);
