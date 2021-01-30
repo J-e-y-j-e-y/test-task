@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class ClientController extends AbstractController{
-    private HashMap<Integer,Client> clients = new HashMap<>();
+    private static HashMap<Integer,Client> clients = new HashMap<>();
     private final String  clientsTableName = "CLIENTS";
 
     @Override
@@ -73,23 +73,47 @@ public class ClientController extends AbstractController{
 
     @Override
     public boolean delete(Object id) {
-        int client_id = (int) id;
-        Client client = clients.get(client_id);
+        Client client = (Client) id;
         // delete client
-        clients.remove(client_id);
 
-        String query = "DELETE FROM " + clientsTableName;
-        query += " WHERE " + "client_id = " + client_id + ";";
-        PreparedStatement ps = getPrepareStatement(query);
+        int client_id = client.getId();
+        clients.remove(client_id);
         int rows = 0;
+
+        String query = "DELETE FROM " + "ClientsBank";
+        query += " WHERE " + "clientId = " + client_id + ";";
+        PreparedStatement ps = getPrepareStatement(query);
         try {
-            rows = ps.executeUpdate();
+            rows += ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePrepareStatement(ps);
         }
-        return rows == 1;
+        query = "DELETE FROM " + "CREDITOFFERS";
+        query += " WHERE " + "clientId = " + client_id + ";";
+        ps = getPrepareStatement(query);
+        try {
+            rows += ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+
+
+        query = "DELETE FROM " + clientsTableName;
+        query += " WHERE " + "id = " + client_id + ";";
+        ps = getPrepareStatement(query);
+        try {
+            rows += ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+
+        return rows == 3;
     }
 
     @Override
@@ -116,7 +140,7 @@ public class ClientController extends AbstractController{
         return rows == 1;
     }
 
-    public HashMap<Integer, Client> getClients() {
+    public static HashMap<Integer, Client> getClients() {
         return clients;
     }
 }

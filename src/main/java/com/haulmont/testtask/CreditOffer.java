@@ -1,14 +1,44 @@
 package com.haulmont.testtask;
 
 public class CreditOffer {
+    private int id;
     private Client client;
     private Credit credit;
     private double creditSum;
 
-    public CreditOffer(Client client, Credit credit, double creditSum) {
+    public CreditOffer(int id, Client client, Credit credit, double creditSum) {
+        this.id = id;
         this.client = client;
         this.credit = credit;
         this.creditSum = creditSum;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Credit getCredit() {
+        return credit;
+    }
+
+    public String getCreditSum() {
+        return String.valueOf(creditSum);
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setCredit(Credit credit) {
+        this.credit = credit;
+    }
+
+    public void setCreditSum(String creditSum) {
+        this.creditSum = Double.parseDouble(creditSum);
     }
     // график платежей ????
 }

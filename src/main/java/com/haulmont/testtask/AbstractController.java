@@ -60,16 +60,22 @@ public abstract class AbstractController <E, K>{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        PreparedStatement ps = getPrepareStatement(query);
-        int res = 0;
-        try {
-            res = ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closePrepareStatement(ps);
+        String[] queries = query.split(";");
+        int rows = 0;
+        for(int i = 0; i < queries.length; i++){
+            String creationQuery = queries[i];
+            if(i != queries.length - 1)
+               creationQuery += ";";
+            PreparedStatement ps = getPrepareStatement(creationQuery);
+            try {
+                rows += ps.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closePrepareStatement(ps);
+            }
         }
-        return res == 1;
+        return rows == queries.length;
     }
 
     public static boolean insertValues(){

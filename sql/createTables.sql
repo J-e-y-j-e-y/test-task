@@ -6,3 +6,32 @@ CREATE TABLE CLIENTS(
     passport VARCHAR(6) NOT NULL,
     PRIMARY KEY (id)
 );
+CREATE TABLE BANKS(
+    id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE CREDITS(
+    id INT NOT NULL,
+    limit DOUBLE NOT NULL,
+    procent DOUBLE NOT NULL,
+    bankId INT NOT NULL,
+    FOREIGN KEY (bankId) REFERENCES BANKS(id),
+    PRIMARY KEY (id)
+);
+CREATE TABLE ClientsBank(
+    clientId INT NOT NULL,
+    bankId INT NOT NULL,
+    FOREIGN KEY (clientId) REFERENCES CLIENTS(id),
+    FOREIGN KEY (bankId) REFERENCES BANKS(id),
+    PRIMARY KEY (clientId, bankId)
+);
+CREATE TABLE CREDITOFFERS(
+    id INT NOT NULL,
+    clientId INT NOT NULL,
+    creditId INT NOT NULL,
+    FOREIGN KEY (clientId) REFERENCES CLIENTS(id),
+    FOREIGN KEY (creditId) REFERENCES CREDITS(id),
+    creditSum DOUBLE NOT NULL,
+    PRIMARY KEY (id)
+);
