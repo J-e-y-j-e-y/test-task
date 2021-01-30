@@ -8,9 +8,17 @@ import java.util.HashMap;
 public class CreditOfferController extends AbstractController{
     private final String CreditOfferTableName = "CREDITOFFERS";
     private static HashMap<Integer, CreditOffer> offers = new HashMap<>();
+    private ClientController clientController;
+    private CreditController creditController;
+
+    public CreditOfferController(ClientController clientController, CreditController creditController) {
+        this.clientController = clientController;
+        this.creditController = creditController;
+    }
+
 
     @Override
-    public HashMap getAll() {
+    public HashMap<Integer, CreditOffer> getAll() {
         String query = "SELECT * FROM " + CreditOfferTableName + ";";
         PreparedStatement ps = getPrepareStatement(query);
         try {
@@ -18,13 +26,13 @@ public class CreditOfferController extends AbstractController{
             while (rs.next()) {
                 int id = rs.getInt(1);
                 int client_id = rs.getInt(2);
-                double credit_id = rs.getInt(3);
+                int credit_id = rs.getInt(3);
                 double creditSum = rs.getDouble(4);
-                HashMap<Integer, Client> clients = ClientController.getClients();
+                HashMap<Integer, Client> clients = clientController.getAll();///ClientController.getClients();
                 Client client = clients.get(client_id);
-                HashMap<Integer, Credit> credits = CreditController.getCredits();
+                HashMap<Integer, Credit> credits = creditController.getAll(); // CreditController.getCredits();
                 Credit credit = credits.get(credit_id);
-
+                System.out.println("Credit = " + credit);
                 //Bank bank = new Bank(bankId, bankName);
 
                 CreditOffer offer = new CreditOffer(id, client, credit, creditSum);

@@ -51,4 +51,10 @@ public class Client {
     public void setPassport(String passport) {
         this.passport = passport;
     }
+
+    @Override
+    public String toString() {
+        return "[ " + id + " ] " +
+                "  " + name + " ";
+    }
 }

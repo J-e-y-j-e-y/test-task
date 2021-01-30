@@ -14,7 +14,7 @@ public class MainUI extends UI {
     private ClientController clientController = new ClientController();
     private BankController bankController = new BankController();
     private CreditController creditController = new CreditController();
-    private CreditOfferController offerController = new CreditOfferController();
+    private CreditOfferController offerController = new CreditOfferController(clientController, creditController);
 
     private Grid<Client> clientsGrid = new Grid<>(Client.class);
     private ClientForm clientForm = new ClientForm(this, clientController);
@@ -36,7 +36,7 @@ public class MainUI extends UI {
     Button addCredit = new Button("Add new credit");
 
     private Grid<CreditOffer> offersGrid = new Grid<>(CreditOffer.class);
-    private OfferForm offerForm = new OfferForm(this, offerController, clientController);
+    private OfferForm offerForm = new OfferForm(this, offerController, clientController, creditController);
     TextField offerfilterText = new TextField();
     HorizontalLayout offerContent = new HorizontalLayout(offersGrid, offerForm);
     Button addOffer = new Button("Add new credit offer");
@@ -57,9 +57,7 @@ public class MainUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         VerticalLayout vertLayout = new VerticalLayout();
-        HorizontalLayout horizLayout = new HorizontalLayout();
-      //  vertLayout.setSizeFull();
-        //vertLayout.setMargin(true);
+
 
         addClient.addClickListener(e -> {
             clientsGrid.asSingleSelect().clear();
@@ -74,6 +72,10 @@ public class MainUI extends UI {
 
         creditsGrid.asSingleSelect().addValueChangeListener(event ->
                 creditForm.setCredit(creditsGrid.asSingleSelect().getValue()));
+
+        offersGrid.asSingleSelect().addValueChangeListener(event ->
+                offerForm.setOffer(offersGrid.asSingleSelect().getValue()));
+
         MenuBar bar = new MenuBar();
 
         Button clientsButton = new Button("Clients");
@@ -127,7 +129,7 @@ public class MainUI extends UI {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 offerForm.setOffer(null);
-                offersGrid.setColumns("name","creditSum");
+                offersGrid.setColumns("client", "credit", "creditSum");
                 updateOffers();
                 offerfilterText.setPlaceholder("Filter by name...");
                 offerfilterText.setValueChangeMode(ValueChangeMode.EAGER);
@@ -244,6 +246,10 @@ public class MainUI extends UI {
         creditContent.setVisible(false);
         creditfilterText.setVisible(false);
         vertLayout.addComponents(creditfilterText, creditContent);
+
+        offerContent.setVisible(false);
+        offerfilterText.setVisible(false);
+        vertLayout.addComponents(offerfilterText, offerContent);
 
         setContent(vertLayout);
 

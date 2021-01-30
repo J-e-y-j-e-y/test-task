@@ -55,4 +55,12 @@ public class Credit {
     public void setBank(Bank bank) {
         this.bank = bank;
     }
+
+    @Override
+    public String toString() {
+        return id + "." +
+                " limit[" + limit + "]" +
+                " procent[" + procent + "]" +
+                " bankName[" + bankName + "]";
+    }
 }

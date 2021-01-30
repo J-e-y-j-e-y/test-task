@@ -14,6 +14,35 @@ public class CreditController extends AbstractController{
         return credits;
     }
 
+    public HashMap<Integer, Credit> getAllCreditsWithoutBank(){
+        HashMap<Integer, Credit> newCredits = new HashMap<>();
+        String query = "SELECT * FROM " + CreditTable + ";";
+        PreparedStatement ps = getPrepareStatement(query);
+        try {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                double limit = rs.getDouble(2);
+                double procent = rs.getDouble(3);
+                int bankId = rs.getInt(4);
+                String bankName = rs.getString(6);
+                HashMap<Integer, Bank> banks = BankController.getBanks();
+                Bank bank = banks.get(bankId);
+                bank.setName(bankName);
+                //Bank bank = new Bank(bankId, bankName);
+
+                Credit credit = new Credit(id, limit, procent, bank);
+                System.out.println(credit);
+                newCredits.put(id, credit);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        return newCredits;
+    }
+
     @Override
     public HashMap<Integer, Credit> getAll() {
         credits.clear();

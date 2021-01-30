@@ -1,6 +1,8 @@
 package com.haulmont.testtask;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValueProvider;
+import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
 
 import java.util.ArrayList;
@@ -39,7 +41,17 @@ public class CreditForm extends FormLayout{
         this.addComponents(limit, procent, bank, components);
         binder.bind(limit, Credit::getLimit, Credit::setLimit);
         binder.bind(procent, Credit::getProcent, Credit::setProcent);
-        binder.bind(bank, Credit::getBankName, Credit::setBankName);
+        binder.bind(bank, new ValueProvider<Credit, String>() {
+            @Override
+            public String apply(Credit credit) {
+                return credit.getBank().getName();
+            }
+        }, new Setter<Credit, String>() {
+            @Override
+            public void accept(Credit credit, String s) {
+                credit.getBank().setName(s);
+            }
+        });
        //binder.bindInstanceFields(this);
     }
     public void setCredit(Credit credit) {
