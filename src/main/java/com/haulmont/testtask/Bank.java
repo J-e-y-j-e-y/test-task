@@ -41,4 +41,14 @@ public class Bank {
     public void setClients(ArrayList<Client> clients) {
         this.clients = clients;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "[ " + id + " ]  " +
+                "" + name + " ";
+    }
 }

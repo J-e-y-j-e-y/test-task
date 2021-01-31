@@ -10,7 +10,11 @@ import java.util.Map;
 public class BankController extends AbstractController{
     private static HashMap<Integer, Bank> banks = new HashMap<>();
     private final String banksTableName = "BANKS";
+    private static int idCount = 1;
 
+    public BankController(){
+        banks = getAll();
+    }
 
     @Override
     public HashMap<Integer, Bank> getAll() {
@@ -23,6 +27,7 @@ public class BankController extends AbstractController{
                 String name = rs.getString(2);
                 Bank bank = new Bank(id, name);
                 banks.put(id, bank);
+                idCount++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,13 +78,42 @@ public class BankController extends AbstractController{
         return banks.get(bank_id);
     }
 
+    public void updateCredits(){
+        System.out.println("CREDITS!!!");
+        for(Map.Entry<Integer, Bank> entry : banks.entrySet()) {
+            Bank b = entry.getValue();
+            ArrayList<Credit> creditArrayList = new ArrayList<>();
+            String query = "SELECT * FROM " + "CREDITS";
+            query += " WHERE bankId = " + b.getId() + ";";
+            PreparedStatement ps = getPrepareStatement(query);
+            try {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(1);
+                    double limit = rs.getDouble(2);
+                    double procent = rs.getDouble(3);
+                    int bankId = rs.getInt(4);
+                    Credit c = new Credit(id, limit, procent, b);
+                    creditArrayList.add(c);
+                    System.out.println(c);
+                }
+                b.setCreditList(creditArrayList);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closePrepareStatement(ps);
+            }
+        }
+    }
+
     @Override
     public boolean delete(Object id) {
         Bank bank = (Bank) id;
         // delete client
 
         int bank_id = bank.getId();
-        banks.remove(bank_id);
+        System.out.println();
+
         int rows = 0;
 
         String query = "DELETE FROM " + "ClientsBank";
@@ -93,10 +127,11 @@ public class BankController extends AbstractController{
             closePrepareStatement(ps);
         }
 
-        HashMap<Integer,Credit> credit_list = CreditController.getCredits();
-        //System.out.println(credit_list.size());
-        for(Map.Entry<Integer, Credit> entry : credit_list.entrySet()){
-            Credit credit = entry.getValue();
+        updateCredits();
+        ArrayList<Credit> credit_list = banks.get(bank_id).getCreditList(); //CreditController.getCredits();
+        System.out.println(credit_list.size());
+        for(Credit credit : credit_list){
+            //Credit credit = entry.getValue();
             //System.out.println(credit);
             if(!credit.getBank().getName().equals(bank.getName()))
                 continue;
@@ -133,7 +168,7 @@ public class BankController extends AbstractController{
         } finally {
             closePrepareStatement(ps);
         }
-
+        banks.remove(bank_id);
         return rows == 2 + credit_list.size();
     }
 
@@ -160,5 +195,9 @@ public class BankController extends AbstractController{
 
     public static HashMap<Integer, Bank> getBanks() {
         return banks;
+    }
+
+    public int generateId(){
+        return idCount++;
     }
 }

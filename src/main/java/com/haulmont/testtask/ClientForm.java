@@ -15,6 +15,7 @@ public class ClientForm extends FormLayout{
     private TextField email = new TextField("email");
     private TextField passport = new TextField("passport");
 
+    private Button add = new Button("Add");
     private Button update = new Button("Update");
     private Button delete = new Button("Delete");
 
@@ -26,25 +27,50 @@ public class ClientForm extends FormLayout{
         this.ui = ui;
         this.controller = controller;
 
+        add.addClickListener(e -> add());
+        add.setVisible(false);
         update.addClickListener(e -> update());
         delete.addClickListener(e -> delete());
         HorizontalLayout components = new HorizontalLayout();
+        components.addComponent((Component) add);
         components.addComponent((Component) update);
         components.addComponent((Component) delete);
+
 
         this.addComponents(name, phoneNumber, email, passport, components);
         binder.bindInstanceFields(this);
     }
     public void setClient(Client client) {
         binder.setBean(client);
-
         if (client == null) {
             setVisible(false);
         } else {
+            add.setVisible(false);
+            update.setVisible(true);
+            delete.setVisible(true);
             setVisible(true);
             name.focus();
         }
     }
+
+    public void addButton(){
+        setClient(new Client(controller.generateId(), null, null, null, null));
+        add.setVisible(true);
+        update.setVisible(false);
+        delete.setVisible(false);
+        setVisible(true);
+    }
+
+    public void add(){
+        Client client = binder.getBean();
+        int id = controller.generateId();
+        client.setId(id);
+        controller.create(client);
+
+        ui.updateClients();
+        setClient(null);
+    }
+
     public void update(){
         Client client = binder.getBean();
         controller.update(client);

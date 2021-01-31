@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainUI extends UI {
-
+    private PaymentGraph graph = new PaymentGraph();
     private ClientController clientController = new ClientController();
     private BankController bankController = new BankController();
     private CreditController creditController = new CreditController();
     private CreditOfferController offerController = new CreditOfferController(clientController, creditController);
+
 
     private Grid<Client> clientsGrid = new Grid<>(Client.class);
     private ClientForm clientForm = new ClientForm(this, clientController);
@@ -28,25 +29,28 @@ public class MainUI extends UI {
     private TextField bankfilterText = new TextField();
     HorizontalLayout bankContent = new HorizontalLayout(banksGrid, bankForm);
     Button addBank = new Button("Add new bank");
+    HorizontalLayout bankTool = new HorizontalLayout(bankfilterText, addBank);
 
     private Grid<Credit> creditsGrid = new Grid<>(Credit.class);
     private CreditForm creditForm = new CreditForm(this, creditController, bankController);
     TextField creditfilterText = new TextField();
     HorizontalLayout creditContent = new HorizontalLayout(creditsGrid, creditForm);
     Button addCredit = new Button("Add new credit");
+    HorizontalLayout creditTool = new HorizontalLayout(creditfilterText, addCredit);
 
     private Grid<CreditOffer> offersGrid = new Grid<>(CreditOffer.class);
-    private OfferForm offerForm = new OfferForm(this, offerController, clientController, creditController);
+    private OfferForm offerForm = new OfferForm(this, offerController, clientController, creditController, bankController, graph);
     TextField offerfilterText = new TextField();
     HorizontalLayout offerContent = new HorizontalLayout(offersGrid, offerForm);
     Button addOffer = new Button("Add new credit offer");
+    HorizontalLayout offerTool = new HorizontalLayout(offerfilterText, addOffer);
 
     static{
-        try {
+       /* try {
             Class.forName("C:\\Users\\user\\Documents\\TestProject\\test-task\\target\\lib\\hsqldb-2.5.1.jar!\\org\\hsqldb\\jdbc\\JDBCDriver.class");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         boolean con = AbstractController.setConnection();
         System.out.println("CONNECTION : " + con);
         AbstractController.createTables();
@@ -61,7 +65,19 @@ public class MainUI extends UI {
 
         addClient.addClickListener(e -> {
             clientsGrid.asSingleSelect().clear();
-            clientForm.setClient(new Client(0, null, null, null, null));
+            clientForm.addButton();
+        });
+        addBank.addClickListener(e -> {
+            banksGrid.asSingleSelect().clear();
+            bankForm.addButton();
+        });
+        addCredit.addClickListener(e -> {
+            creditsGrid.asSingleSelect().clear();
+            creditForm.addButton();
+        });
+        addOffer.addClickListener(e -> {
+            offersGrid.asSingleSelect().clear();
+            offerForm.addButton();
         });
 
         clientsGrid.asSingleSelect().addValueChangeListener(event ->
@@ -105,7 +121,7 @@ public class MainUI extends UI {
                 bankfilterText.setValueChangeMode(ValueChangeMode.EAGER);
 
                 bankContent.setVisible(true);
-                bankfilterText.setVisible(true);
+                bankTool.setVisible(true);
             }
         });
         Button creditsButton = new Button("Credits");
@@ -120,7 +136,7 @@ public class MainUI extends UI {
                 creditfilterText.setValueChangeMode(ValueChangeMode.EAGER);
 
                 creditContent.setVisible(true);
-                creditfilterText.setVisible(true);
+                creditTool.setVisible(true);
 
             }
         });
@@ -135,7 +151,7 @@ public class MainUI extends UI {
                 offerfilterText.setValueChangeMode(ValueChangeMode.EAGER);
 
                 offerContent.setVisible(true);
-                offerfilterText.setVisible(true);
+                offerTool.setVisible(true);
             }
         });
 
@@ -149,15 +165,15 @@ public class MainUI extends UI {
 
                 bankForm.setBank(null);
                 bankContent.setVisible(false);
-                bankfilterText.setVisible(false);
+                bankTool.setVisible(false);
 
                 creditForm.setCredit(null);
                 creditContent.setVisible(false);
-                creditfilterText.setVisible(false);
+                creditTool.setVisible(false);
 
                 offerForm.setOffer(null);
                 offerContent.setVisible(false);
-                offerfilterText.setVisible(false);
+                offerTool.setVisible(false);
 
                 clientsButton.click();
             }
@@ -171,15 +187,15 @@ public class MainUI extends UI {
 
                 bankForm.setBank(null);
                 bankContent.setVisible(false);
-                bankfilterText.setVisible(false);
+                bankTool.setVisible(false);
 
                 creditForm.setCredit(null);
                 creditContent.setVisible(false);
-                creditfilterText.setVisible(false);
+                creditTool.setVisible(false);
 
                 offerForm.setOffer(null);
                 offerContent.setVisible(false);
-                offerfilterText.setVisible(false);
+                offerTool.setVisible(false);
 
                 banksButton.click();
             }
@@ -193,15 +209,15 @@ public class MainUI extends UI {
 
                 bankForm.setBank(null);
                 bankContent.setVisible(false);
-                bankfilterText.setVisible(false);
+                bankTool.setVisible(false);
 
                 creditForm.setCredit(null);
                 creditContent.setVisible(false);
-                creditfilterText.setVisible(false);
+                creditTool.setVisible(false);
 
                 offerForm.setOffer(null);
                 offerContent.setVisible(false);
-                offerfilterText.setVisible(false);
+                offerTool.setVisible(false);
 
                 creditsButton.click();
             }
@@ -215,15 +231,15 @@ public class MainUI extends UI {
 
                 bankForm.setBank(null);
                 bankContent.setVisible(false);
-                bankfilterText.setVisible(false);
+                bankTool.setVisible(false);
 
                 creditForm.setCredit(null);
                 creditContent.setVisible(false);
-                creditfilterText.setVisible(false);
+                creditTool.setVisible(false);
 
                 offerForm.setOffer(null);
                 offerContent.setVisible(false);
-                offerfilterText.setVisible(false);
+                offerTool.setVisible(false);
 
                 creditOffersButton.click();
             }
@@ -240,16 +256,16 @@ public class MainUI extends UI {
         vertLayout.addComponents(clientTool, clientContent);
 
         bankContent.setVisible(false);
-        bankfilterText.setVisible(false);
-        vertLayout.addComponents(bankfilterText, bankContent);
+        bankTool.setVisible(false);
+        vertLayout.addComponents(bankTool, bankContent);
 
         creditContent.setVisible(false);
-        creditfilterText.setVisible(false);
-        vertLayout.addComponents(creditfilterText, creditContent);
+        creditTool.setVisible(false);
+        vertLayout.addComponents(creditTool, creditContent);
 
         offerContent.setVisible(false);
-        offerfilterText.setVisible(false);
-        vertLayout.addComponents(offerfilterText, offerContent);
+        offerTool.setVisible(false);
+        vertLayout.addComponents(offerTool, offerContent);
 
         setContent(vertLayout);
 

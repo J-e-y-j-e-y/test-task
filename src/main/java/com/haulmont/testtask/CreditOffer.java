@@ -5,6 +5,7 @@ public class CreditOffer {
     private Client client;
     private Credit credit;
     private double creditSum;
+    private int months;
 
     public CreditOffer(int id, Client client, Credit credit, double creditSum) {
         this.id = id;
@@ -39,6 +40,18 @@ public class CreditOffer {
 
     public void setCreditSum(String creditSum) {
         this.creditSum = Double.parseDouble(creditSum);
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMonths() {
+        return String.valueOf(months);
+    }
+
+    public void setMonths(String months) {
+        this.months = Integer.parseInt(months);
     }
     // график платежей ????
 }

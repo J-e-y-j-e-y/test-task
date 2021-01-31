@@ -11,6 +11,7 @@ public class BankForm extends FormLayout{
 
     private TextField name = new TextField("name");
 
+    private Button add = new Button("Add");
     private Button update = new Button("Update");
     private Button delete = new Button("Delete");
 
@@ -22,9 +23,12 @@ public class BankForm extends FormLayout{
         this.ui = ui;
         this.controller = controller;
 
+        add.addClickListener(e -> add());
+        add.setVisible(false);
         update.addClickListener(e -> update());
         delete.addClickListener(e -> delete());
         HorizontalLayout components = new HorizontalLayout();
+        components.addComponent((Component) add);
         components.addComponent((Component) update);
         components.addComponent((Component) delete);
 
@@ -36,10 +40,32 @@ public class BankForm extends FormLayout{
         if (bank == null) {
             setVisible(false);
         } else {
+            add.setVisible(false);
+            update.setVisible(true);
+            delete.setVisible(true);
             setVisible(true);
             name.focus();
         }
     }
+
+    public void addButton(){
+        setBank(new Bank(controller.generateId(), null));
+        add.setVisible(true);
+        update.setVisible(false);
+        delete.setVisible(false);
+        setVisible(true);
+    }
+
+    public void add(){
+        Bank bank = binder.getBean();
+        int id = controller.generateId();
+        bank.setId(id);
+        controller.create(bank);
+
+        ui.updateBanks();
+        setBank(null);
+    }
+
     public void update(){
         Bank bank = binder.getBean();
         controller.update(bank);

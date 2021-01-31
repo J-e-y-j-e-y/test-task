@@ -8,6 +8,11 @@ import java.util.HashMap;
 public class ClientController extends AbstractController{
     private static HashMap<Integer,Client> clients = new HashMap<>();
     private final String  clientsTableName = "CLIENTS";
+    private static int idCount = 1;
+
+    public ClientController(){
+        clients = getAll();
+    }
 
     @Override
     public HashMap<Integer, Client> getAll() {
@@ -24,6 +29,7 @@ public class ClientController extends AbstractController{
 
                 Client client = new Client(id, name, phoneNumber, email, passport);
                 clients.put(id, client);
+                idCount++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,5 +148,9 @@ public class ClientController extends AbstractController{
 
     public static HashMap<Integer, Client> getClients() {
         return clients;
+    }
+
+    public int generateId(){
+        return idCount++;
     }
 }

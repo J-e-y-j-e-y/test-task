@@ -10,10 +10,12 @@ public class CreditOfferController extends AbstractController{
     private static HashMap<Integer, CreditOffer> offers = new HashMap<>();
     private ClientController clientController;
     private CreditController creditController;
+    private static int idCount = 1;
 
     public CreditOfferController(ClientController clientController, CreditController creditController) {
         this.clientController = clientController;
         this.creditController = creditController;
+        offers = getAll();
     }
 
 
@@ -37,6 +39,7 @@ public class CreditOfferController extends AbstractController{
 
                 CreditOffer offer = new CreditOffer(id, client, credit, creditSum);
                 offers.put(id, offer);
+                idCount++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,7 +62,7 @@ public class CreditOfferController extends AbstractController{
         String query = "UPDATE " + CreditOfferTableName;
         query += " SET clientId = '" + updatedCredit.getClient().getId() + "',";
         query += " creditId = '" + updatedCredit.getCredit().getId() + "',";
-        query += " creditSum = '" + updatedCredit.getCreditSum() + "',";
+        query += " creditSum = '" + updatedCredit.getCreditSum() + "'";
         query += " WHERE " + "id = " + credit_id + ";";
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
@@ -83,8 +86,8 @@ public class CreditOfferController extends AbstractController{
 
     @Override
     public boolean delete(Object id) {
-        int offer_id = (int) id;
-        CreditOffer of = offers.get(offer_id);
+        CreditOffer of = (CreditOffer) id;
+        int offer_id = of.getId();
         // delete client
         offers.remove(offer_id);
 
@@ -123,5 +126,8 @@ public class CreditOfferController extends AbstractController{
             closePrepareStatement(ps);
         }
         return rows == 1;
+    }
+    public int generateId(){
+        return idCount++;
     }
 }

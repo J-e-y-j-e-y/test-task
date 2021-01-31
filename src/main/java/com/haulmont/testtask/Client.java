@@ -54,7 +54,11 @@ public class Client {
 
     @Override
     public String toString() {
-        return "[ " + id + " ] " +
+        return "" + id + ". " +
                 "  " + name + " ";
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

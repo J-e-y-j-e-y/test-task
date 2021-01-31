@@ -9,10 +9,17 @@ import java.util.Map;
 public class CreditController extends AbstractController{
     private static HashMap<Integer, Credit> credits = new HashMap<>();
     private String CreditTable = "CREDITS";
+    private static int idCount = 1;
+
+    public CreditController(){
+        credits = getAll();
+    }
 
     public static HashMap<Integer, Credit> getCredits() {
         return credits;
     }
+
+
 
     public HashMap<Integer, Credit> getAllCreditsWithoutBank(){
         HashMap<Integer, Credit> newCredits = new HashMap<>();
@@ -25,13 +32,13 @@ public class CreditController extends AbstractController{
                 double limit = rs.getDouble(2);
                 double procent = rs.getDouble(3);
                 int bankId = rs.getInt(4);
-                String bankName = rs.getString(6);
-                HashMap<Integer, Bank> banks = BankController.getBanks();
-                Bank bank = banks.get(bankId);
-                bank.setName(bankName);
+                //String bankName = rs.getString(5);
+                //HashMap<Integer, Bank> banks = BankController.getBanks();
+                //Bank bank = banks.get(bankId);
+                //bank.setName(bankName);
                 //Bank bank = new Bank(bankId, bankName);
 
-                Credit credit = new Credit(id, limit, procent, bank);
+                Credit credit = new Credit(id, limit, procent, null);
                 System.out.println(credit);
                 newCredits.put(id, credit);
             }
@@ -64,8 +71,10 @@ public class CreditController extends AbstractController{
                 //Bank bank = new Bank(bankId, bankName);
 
                 Credit credit = new Credit(id, limit, procent, bank);
+                credit.setBankName(bank.getName());
                 System.out.println(credit);
                 credits.put(id, credit);
+                idCount++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,7 +98,7 @@ public class CreditController extends AbstractController{
         String query = "UPDATE " + CreditTable;
         query += " SET limit = '" + updatedCredit.getLimit() + "',";
         query += " procent = '" + updatedCredit.getProcent() + "',";
-        query += " bankId = '" + updatedCredit.getBank().getId() + "',";
+        query += " bankId = '" + updatedCredit.getBank().getId() + "'";
         query += " WHERE " + "id = " + credit_id + ";";
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
@@ -164,5 +173,8 @@ public class CreditController extends AbstractController{
             closePrepareStatement(ps);
         }
         return rows == 1;
+    }
+    public int generateId(){
+        return idCount++;
     }
 }

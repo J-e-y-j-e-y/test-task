@@ -36,7 +36,8 @@ public class Credit {
 
     public void setBankName(String name){
         if(bank != null){
-            bank.setName(name);
+           // bank.setName(name);
+            bankName = name;
         }
     }
 
@@ -62,5 +63,9 @@ public class Credit {
                 " limit[" + limit + "]" +
                 " procent[" + procent + "]" +
                 " bankName[" + bankName + "]";
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
