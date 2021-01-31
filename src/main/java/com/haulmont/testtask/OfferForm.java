@@ -106,6 +106,8 @@ public class OfferForm extends FormLayout {
         this.setWidthFull();
     }
     public void setOffer(CreditOffer offer) {
+        updateClients();
+        updateCredits();
         binder.setBean(offer);
 
         if (offer == null) {
@@ -123,6 +125,16 @@ public class OfferForm extends FormLayout {
             creditSum.focus();
         }
     }
+    public void updateClients(){
+        ArrayList<String> clients = new ArrayList<>();
+        clientController.getAll().forEach((i, c) -> clients.add(c.toString()));
+        client.setItems(clients);
+    }
+    public void updateCredits(){
+        ArrayList<String> credits = new ArrayList<>();
+        creditController.getAll().forEach((i, c) -> credits.add(c.toString()));
+        credit.setItems(credits);
+    }
 
      void calculate(){
         //monthPayment.setVisible(true);
@@ -139,32 +151,28 @@ public class OfferForm extends FormLayout {
         double coef = (interestRate * Math.pow(1 + interestRate, monthCount))/(Math.pow(1 + interestRate, monthCount) - 1);
         double annuity = creditSum * coef;
 
+        double totalProcentSum = 0;
+        double totalCreditBodySum = 0;
+        double totalSum = 0;
+
         double mProcentSum = creditSum * interestRate;
         double mCreditSum = 0;
         double rest = creditSum;
         ArrayList<PaymentGraph> paymentGraphArrayList = new ArrayList<>();
         for(int i = 1; i <= monthCount; i++){
+            totalSum += annuity;
+            totalProcentSum += mProcentSum;
             mCreditSum = annuity - mProcentSum;
+            totalCreditBodySum += mCreditSum;
             rest -= mCreditSum;
             paymentGraphArrayList.add(new PaymentGraph(i, annuity, mCreditSum, mProcentSum));
             mProcentSum = rest * interestRate;
         }
-        graphGrid.setItems(paymentGraphArrayList);
+         paymentGraphArrayList.add(new PaymentGraph(0, totalSum, totalCreditBodySum, totalProcentSum));
+         graphGrid.setItems(paymentGraphArrayList);
        // monthPayment.setValue(String.valueOf(monthPayment()));
        // creditBody.setValue(String.valueOf(totalCreditSum()));
        // procentRemains.setValue(String.valueOf(totalProcentSum()));
-    }
-
-    double totalProcentSum(){
-        return 0;
-    }
-
-    double totalCreditSum(){
-         return 0;
-    }
-
-    double monthPayment(){
-        return 0;
     }
 
     public void addButton(){
