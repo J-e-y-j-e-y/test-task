@@ -31,6 +31,7 @@ public class CreditOfferController extends AbstractController{
                 int client_id = rs.getInt(2);
                 int credit_id = rs.getInt(3);
                 double creditSum = rs.getDouble(4);
+                int months = rs.getInt(5);
                 HashMap<Integer, Client> clients = clientController.getAll();///ClientController.getClients();
                 Client client = clients.get(client_id);
                 HashMap<Integer, Credit> credits = creditController.getAll(); // CreditController.getCredits();
@@ -38,7 +39,7 @@ public class CreditOfferController extends AbstractController{
                 System.out.println("Credit = " + credit);
                 //Bank bank = new Bank(bankId, bankName);
 
-                CreditOffer offer = new CreditOffer(id, client, credit, creditSum);
+                CreditOffer offer = new CreditOffer(id, client, credit, creditSum, months);
                 offers.put(id, offer);
                 idCount++;
             }
@@ -63,7 +64,8 @@ public class CreditOfferController extends AbstractController{
         String query = "UPDATE " + CreditOfferTableName;
         query += " SET clientId = '" + updatedCredit.getClient().getId() + "',";
         query += " creditId = '" + updatedCredit.getCredit().getId() + "',";
-        query += " creditSum = '" + updatedCredit.getCreditSum() + "'";
+        query += " creditSum = '" + updatedCredit.getCreditSum() + "',";
+        query += " months = '" + updatedCredit.getMonths() + "'";
         query += " WHERE " + "id = " + credit_id + ";";
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
@@ -116,7 +118,8 @@ public class CreditOfferController extends AbstractController{
         query += " VALUES( '" + offer.getId() + "',";
         query += " '" + offer.getClient().getId() + "',";
         query += " '" + offer.getCredit().getId() + "',";
-        query += " '" + offer.getCreditSum() + "');";
+        query += " '" + offer.getCreditSum() + "',";
+        query += " '" + offer.getMonths() + "');";
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {

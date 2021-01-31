@@ -170,7 +170,7 @@ public class OfferForm extends FormLayout {
     public void addButton(){
         Client client = new Client(clientController.generateId(), null, null, null, null);
         Credit credit = new Credit(controller.generateId(), 0, 0, new Bank(bankController.generateId(), null));
-        setOffer(new CreditOffer(controller.generateId(), client, credit, 0));
+        setOffer(new CreditOffer(controller.generateId(), client, credit, 0, 0));
         add.setVisible(true);
         update.setVisible(false);
         delete.setVisible(false);

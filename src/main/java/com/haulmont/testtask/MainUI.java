@@ -103,6 +103,7 @@ public class MainUI extends UI {
                 updateClients();
                 clientfilterText.setPlaceholder("Filter by name...");
                 clientfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                clientfilterText.addValueChangeListener(e -> updateClients());
 
                 clientContent.setVisible(true);
                 clientTool.setVisible(true);
@@ -117,8 +118,9 @@ public class MainUI extends UI {
                 banksGrid.setColumns("name");
                 updateBanks();
 
-                bankfilterText.setPlaceholder("Filter by name...");
+                bankfilterText.setPlaceholder("Filter by bank name...");
                 bankfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                bankfilterText.addValueChangeListener(e -> updateBanks());
 
                 bankContent.setVisible(true);
                 bankTool.setVisible(true);
@@ -132,8 +134,9 @@ public class MainUI extends UI {
                 creditsGrid.setColumns("limit", "procent", "bankName");
                 updateCredits();
 
-                creditfilterText.setPlaceholder("Filter by name...");
+                creditfilterText.setPlaceholder("Filter by bank name...");
                 creditfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                creditfilterText.addValueChangeListener(e -> updateCredits());
 
                 creditContent.setVisible(true);
                 creditTool.setVisible(true);
@@ -145,10 +148,11 @@ public class MainUI extends UI {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 offerForm.setOffer(null);
-                offersGrid.setColumns("client", "credit", "creditSum");
+               // offersGrid.setColumns("client", "credit", "creditSum");
                 updateOffers();
-                offerfilterText.setPlaceholder("Filter by name...");
+                offerfilterText.setPlaceholder("Filter by client name...");
                 offerfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                offerfilterText.addValueChangeListener(e -> updateOffers());
 
                 offerContent.setVisible(true);
                 offerTool.setVisible(true);
@@ -273,20 +277,68 @@ public class MainUI extends UI {
 
     public void updateClients() {
         HashMap<Integer, Client> clients = clientController.getAll();
-        clientsGrid.setItems(new ArrayList<>(clients.values()));
+        String filter = clientfilterText.getValue();
+        if(filter.equals(""))
+            clientsGrid.setItems(new ArrayList<>(clients.values()));
+        else {
+            ArrayList<Client> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, Client> entry : clients.entrySet()) {
+                Client c = entry.getValue();
+                if (c.getName().startsWith(filter))
+                    filtered.add(c);
+            }
+            clientsGrid.setItems(filtered);
+        }
     }
 
     public void updateCredits() {
         HashMap<Integer, Credit> credits = creditController.getAll();
-        creditsGrid.setItems(new ArrayList<>(credits.values()));
+        String filter = creditfilterText.getValue();
+        if(filter.equals(""))
+            creditsGrid.setItems(new ArrayList<>(credits.values()));
+        else {
+            ArrayList<Credit> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, Credit> entry : credits.entrySet()) {
+                Credit c = entry.getValue();
+                if (c.getBankName().startsWith(filter))
+                    filtered.add(c);
+            }
+            creditsGrid.setItems(filtered);
+        }
     }
 
     public void updateBanks() {
         HashMap<Integer, Bank> banks = bankController.getAll();
-        banksGrid.setItems(new ArrayList<>(banks.values()));
+        String filter = bankfilterText.getValue();
+        if(filter.equals(""))
+            banksGrid.setItems(new ArrayList<>(banks.values()));
+        else {
+            ArrayList<Bank> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, Bank> entry : banks.entrySet()) {
+                Bank b = entry.getValue();
+                if (b.getName().startsWith(filter))
+                    filtered.add(b);
+            }
+            banksGrid.setItems(filtered);
+        }
     }
     public void updateOffers() {
         HashMap<Integer, CreditOffer> offers = offerController.getAll();
-        offersGrid.setItems(new ArrayList<>(offers.values()));
+
+        //offersGrid.addColumn(CreditOffer::getClient);
+        //offersGrid.addColumn(CreditOffer::getCredit);
+        //offersGrid.addColumn(CreditOffer::getCreditSum);
+        String filter = offerfilterText.getValue();
+        if(filter.equals(""))
+            offersGrid.setItems(new ArrayList<>(offers.values()));
+        else {
+            ArrayList<CreditOffer> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, CreditOffer> entry : offers.entrySet()) {
+                CreditOffer o = entry.getValue();
+                if (o.getClient().getName().startsWith(filter))
+                    filtered.add(o);
+            }
+            offersGrid.setItems(filtered);
+        }
     }
 }

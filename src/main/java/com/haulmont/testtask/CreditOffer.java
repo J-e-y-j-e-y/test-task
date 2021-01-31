@@ -7,11 +7,12 @@ public class CreditOffer {
     private double creditSum;
     private int months;
 
-    public CreditOffer(int id, Client client, Credit credit, double creditSum) {
+    public CreditOffer(int id, Client client, Credit credit, double creditSum, int months) {
         this.id = id;
         this.client = client;
         this.credit = credit;
         this.creditSum = creditSum;
+        this.months = months;
     }
 
     public int getId() {

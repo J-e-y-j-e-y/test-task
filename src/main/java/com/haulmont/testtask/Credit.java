@@ -60,8 +60,8 @@ public class Credit {
     @Override
     public String toString() {
         return id + "." +
-                " limit[" + limit + "]" +
-                " procent[" + procent + "]" +
+                " limit[" + limit + "] |" +
+                " procent[" + procent + "] |" +
                 " bankName[" + bankName + "]";
     }
 
