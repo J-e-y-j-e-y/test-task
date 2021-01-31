@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainUI extends UI {
-    private PaymentGraph graph = new PaymentGraph();
+
     private ClientController clientController = new ClientController();
     private BankController bankController = new BankController();
     private CreditController creditController = new CreditController();
@@ -39,7 +39,7 @@ public class MainUI extends UI {
     HorizontalLayout creditTool = new HorizontalLayout(creditfilterText, addCredit);
 
     private Grid<CreditOffer> offersGrid = new Grid<>(CreditOffer.class);
-    private OfferForm offerForm = new OfferForm(this, offerController, clientController, creditController, bankController, graph);
+    private OfferForm offerForm = new OfferForm(this, offerController, clientController, creditController, bankController);
     TextField offerfilterText = new TextField();
     HorizontalLayout offerContent = new HorizontalLayout(offersGrid, offerForm);
     Button addOffer = new Button("Add new credit offer");

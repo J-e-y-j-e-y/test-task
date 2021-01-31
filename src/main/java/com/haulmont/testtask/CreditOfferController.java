@@ -21,6 +21,7 @@ public class CreditOfferController extends AbstractController{
 
     @Override
     public HashMap<Integer, CreditOffer> getAll() {
+        offers.clear();
         String query = "SELECT * FROM " + CreditOfferTableName + ";";
         PreparedStatement ps = getPrepareStatement(query);
         try {
